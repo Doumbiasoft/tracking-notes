@@ -12,3 +12,36 @@ body {
 *::after {
   box-sizing: inherit;
 }
+#errorDisplay {
+  position: absolute;
+  background: #fcc;
+  color: red;
+  display: flex;
+  width: 500px;
+  left: 50%;
+  top: calc(50% + 180px);
+  transform: translate(-50%, 0%);
+  box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.25);
+  user-select: none;
+  padding: 20px;
+  display: none;
+  border-radius: 10px;
+}
+#successDisplay {
+  position: absolute;
+  background: rgb(223, 255, 204);
+  color: #03b503ff;
+  display: flex;
+  width: 500px;
+  left: 50%;
+  top: calc(50% + 180px);
+  transform: translate(-50%, 0%);
+  box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.25);
+  user-select: none;
+  padding: 5px;
+  display: none;
+  border-radius: 10px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
