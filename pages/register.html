@@ -5,29 +5,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="./styles/app.css">
-    <link rel="icon" type="image/x-icon" href="./images/note-tracking-logo.png">
-    <script src="./scripts/auth.js"></script>
-    <title>Login - Tracking Notes</title>
+    <link rel="stylesheet" href="../styles/app.css">
+    <link rel="icon" type="image/x-icon" href="../images/note-tracking-logo.png">
+    <script src="../scripts/auth.js"></script>
+    <title>Register - Tracking Notes</title>
 </head>
 
 <body class="bg-gray-100 text-black dark:bg-gray-900 dark:text-white flex items-center justify-center min-h-screen">
     <div class="bg-white dark:bg-gray-800 text-black dark:text-white p-6 rounded-xl shadow-md w-full max-w-sm">
         <div class="w-full flex flex-col items-center justify-center mb-2">
-            <img src="./images/note-tracking-logo.png" alt="logo" class="h-24 w-24">
+            <img src="../images/note-tracking-logo.png" alt="logo" class="h-24 w-24">
             <h3 class="text-lg font-bold mb-2 text-center text-red-400 mt-2">Tracking Notes</h3>
         </div>
-        <h1 class="text-xl font-bold mb-10 text-center">Login</h1>
-        <form id="loginForm" class="flex flex-col gap-3">
-            <input type="text" id="loginUsername" placeholder="Username" required
-                class="border px-3 py-2 bg-white dark:bg-gray-600 text-black dark:text-white rounded-lg">
-            <input type="password" id="loginPassword" placeholder="Password" required
+        <h1 class="text-xl font-bold mb-10 text-center">Create Account</h1>
+
+        <form id="registerForm" class="flex flex-col gap-3">
+            <input type="text" id="regUsername" placeholder="Username" required
                 class="border px-3 py-2  bg-white dark:bg-gray-600 text-black dark:text-white rounded-lg">
+            <input type="password" id="regPassword" placeholder="Password" required minlength="4"
+                class="border px-3 py-2 bg-white dark:bg-gray-600 text-black dark:text-white rounded-lg">
             <input type="submit" class="bg-red-400 hover:bg-red-500 text-white py-2 cursor-pointer mt-3 mb-3 rounded-lg"
-                value="Login" />
+                value="Register" />
         </form>
+
         <p class="mt-4 text-sm text-center">
-            Don't have an account? <a href="./pages/register.html" class="text-red-400">Register</a>
+            Already have an account? <a href="../index.html" class="text-red-400">Login</a>
         </p>
     </div>
 </body>
