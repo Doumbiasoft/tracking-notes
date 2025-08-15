@@ -5,12 +5,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./styles/app.css">
     <script src="./scripts/auth.js"></script>
     <title>Tracking Notes - Login</title>
 </head>
 
-<body>
-
+<body class="bg-gray-100 text-black dark:bg-gray-900 dark:text-white flex items-center justify-center min-h-screen">
+    <div class="bg-white dark:bg-gray-800 text-black dark:text-white p-6 rounded-xl shadow-md w-full max-w-sm">
+        <div class="w-full flex flex-col items-center justify-center mb-2">
+            <img src="./images/note-tracking-logo.png" alt="logo" class="h-24 w-24">
+            <h4 class="text-xl font-bold mb-4 text-center text-red-400 mt-2">Tracking Notes</h4>
+        </div>
+        <h1 class="text-xl font-bold mb-6 text-center">Login</h1>
+        <form id="loginForm" class="flex flex-col gap-3">
+            <input type="text" id="loginUsername" placeholder="Username" required
+                class="border px-3 py-2 bg-white dark:bg-gray-600 text-black dark:text-white rounded-lg">
+            <input type="password" id="loginPassword" placeholder="Password" required
+                class="border px-3 py-2  bg-white dark:bg-gray-600 text-black dark:text-white rounded-lg">
+            <input type="submit" class="bg-red-400 hover:bg-red-500 text-white py-2 cursor-pointer mt-3 mb-3 rounded-lg"
+                value="Login" />
+        </form>
+        <p class="mt-4 text-sm text-center">
+            Don't have an account? <a href="#" class="text-red-400">Register</a>
+        </p>
+    </div>
 </body>
 
 </html>
