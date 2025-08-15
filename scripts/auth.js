@@ -22,6 +22,39 @@ const logout = () => {
   localStorage.removeItem("currentUser");
   location.href = "../index.html";
 };
+const $errorDisplay = document.querySelector("#errorDisplay");
+const $successDisplay = document.querySelector("#successDisplay");
+
+const createErrorsElements = (errors) => {
+  $errorDisplay.innerHTML = "";
+  $successDisplay.innerHTML = "";
+  $successDisplay.style.display = "none";
+  const $ul = document.createElement("ul");
+  const $errorTitle = document.createElement("label");
+  $errorTitle.textContent = errors.length > 1 ? "Errors:" : "Error:";
+  errorDisplay.appendChild($errorTitle);
+  for (let error of errors) {
+    const $li = document.createElement("li");
+    $li.textContent = error;
+    $ul.appendChild($li);
+  }
+  $errorDisplay.appendChild($ul);
+  $errorDisplay.style.display = "block";
+};
+const createSuccessElements = (isSaved, message) => {
+  $successDisplay.innerHTML = "";
+  $errorDisplay.innerHTML = "";
+  $errorDisplay.style.display = "none";
+  if (isSaved) {
+    const success = document.createElement("h3");
+    success.textContent = message;
+    successDisplay.appendChild(success);
+    $successDisplay.style.display = "block";
+  } else {
+    $successDisplay.innerHTML = "";
+    $successDisplay.style.display = "none";
+  }
+};
 
 const $registerForm = document.getElementById("registerForm");
 if ($registerForm) {
