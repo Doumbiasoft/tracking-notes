@@ -2,6 +2,7 @@ const regexOfNoSpecialCharacterOrWhiteSpaceInText = /^[a-zA-Z0-9]+$/;
 const regexOfCheckPassword =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9])(?!.*[Pp][Aa][Ss][Ss][Ww][Oo][Rr][Dd]).{12,}$/;
 
+const $loading = document.querySelector("#loading");
 const $errorDisplay = document.querySelector("#errorDisplay");
 const $successDisplay = document.querySelector("#successDisplay");
 const $infoModal = document.getElementById("infoModal");
@@ -184,14 +185,20 @@ const loginValidations = () => {
 if ($registerForm) {
   $registerForm.addEventListener("submit", (e) => {
     e.preventDefault();
+    $loading.style.display = "flex";
     const isError = registrationValidations();
-    if (isError) return;
+    if (isError) {
+      $loading.style.display = "hidden";
+      return;
+    }
+
     const data = getData();
     if (
       data.find(
         (user) => user.username === $regUsername.value.trim().toLowerCase()
       )
     ) {
+      $loading.style.display = "hidden";
       const errors = ["* Username already taken!"];
       createErrorsElements(errors);
       return;
@@ -201,19 +208,21 @@ if ($registerForm) {
       password: $regPassword.value.trim(),
       notes: [],
     };
+
     data.push(newUser);
     saveData(data);
-    $registerForm.reset();
-    createSuccessElements(!isError, "Successfully registered!");
 
     setTimeout(() => {
-      $infoModal.click();
+      createSuccessElements(!isError, "Successfully registered!");
+    }, 1000);
+
+    setTimeout(() => {
       $errorDisplay.style.display = "none";
       $successDisplay.style.display = "none";
       $errorDisplay.innerHTML = "";
       $successDisplay.innerHTML = "";
       location.href = "../index.html";
-    }, 3000);
+    }, 2000);
   });
 }
 
@@ -235,13 +244,13 @@ if ($loginForm) {
       return;
     }
     setCurrentUser($loginUsername.value.trim().toLowerCase());
-    $loginForm.reset();
+    $loading.style.display = "flex";
     setTimeout(() => {
       $errorDisplay.style.display = "none";
       $successDisplay.style.display = "none";
       $errorDisplay.innerHTML = "";
       $successDisplay.innerHTML = "";
       location.href = "../pages/notes.html";
-    }, 3000);
+    }, 1000);
   });
 }

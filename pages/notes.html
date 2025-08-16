@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
     <link rel="stylesheet" href="../styles/app.css">
     <link rel="icon" type="image/x-icon" href="../images/note-tracking-logo.png">
     <script defer src="../scripts/auth.js"></script>
@@ -13,8 +14,48 @@
     <title>Notes - Tracking Notes</title>
 </head>
 
-<body>
+<body class="bg-gray-100 text-black dark:bg-gray-900 dark:text-white min-h-screen p-6">
+    <div class="max-w-4xl mx-auto mt-4">
+        <div
+            class="flex justify-between items-center py-3 bg-white dark:bg-gray-800 text-black dark:text-white rounded-xl shadow-md p-4 mb-6">
+            <div class="flex items-center gap-2">
+                <img src="../images/note-tracking-logo.png" alt="logo" class="h-10 w-10">
+                <h3 id="mainTitle" class="text-lg font-bold text-red-400 mt-2 text-center uppercase">Tracking
+                    Notes</h3>
+            </div>
+            <div>
+                <span class="text-lg uppercase mr-2"><strong>Welcome back :</strong> <span
+                        class="text-red-400">doumbiasoft</span></span>
+                <button title="Log out" onclick="logout()"
+                    class="bg-red-500 text-white px-3 py-1 rounded-sm cursor-pointer"><i
+                        class="fa-solid fa-power-off"></i></button>
 
+            </div>
+        </div>
+
+        <form id="noteForm"
+            class="bg-white dark:bg-gray-800 text-black dark:text-white rounded-xl shadow-md p-4 mb-6 flex flex-col gap-3">
+            <input id="noteTitle" type="text" placeholder="Note Title" required minlength="3"
+                class="bg-red-50 dark:bg-gray-600 text-black dark:text-white border border-red-400 rounded-lg px-3 py-2">
+            <textarea id="noteContent" placeholder="Write your note..." rows="3" required minlength="5"
+                class="bg-red-50 dark:bg-gray-600 text-black dark:text-white border border-red-400  rounded-lg px-3 py-2"></textarea>
+            <input type="submit"
+                class="bg-red-400 hover:bg-red-500 text-white py-2 cursor-pointer mt-3 mb-3 rounded-3xl uppercase"
+                value="Add Note" />
+        </form>
+
+        <div id="notesContainer" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </div>
+
+    <template id="noteTemplate">
+        <div class="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between note-card">
+            <div>
+                <h2 class="note-title text-lg font-bold mb-2"></h2>
+                <p class="note-content text-gray-700 whitespace-pre-wrap"></p>
+            </div>
+            <button class="delete-btn text-red-500 hover:text-red-700 mt-4">🗑 Delete</button>
+        </div>
+    </template>
 </body>
 
 </html>
