@@ -4,7 +4,7 @@ const regexOfCheckPassword =
 
 const $errorDisplay = document.querySelector("#errorDisplay");
 const $successDisplay = document.querySelector("#successDisplay");
-const infoModal = document.getElementById("infoModal");
+const $infoModal = document.getElementById("infoModal");
 const $registerForm = document.getElementById("registerForm");
 const $regUsername = document.getElementById("regUsername");
 const $regPassword = document.getElementById("regPassword");
@@ -39,18 +39,29 @@ const saveData = (data) => {
 };
 
 const setCurrentUser = (username) => {
-  localStorage.setItem("currentUser", username);
+  localStorage.setItem("trackingNotesCurrentUser", encryptB64(username));
 };
 
 const getCurrentUser = () => {
-  return localStorage.getItem("currentUser");
+  const encryptedData = localStorage.getItem("trackingNotesCurrentUser");
+  if (encryptedData) {
+    const decryptedString = decryptB64(encryptedData);
+    return decryptedString;
+  } else {
+    return null;
+  }
 };
 
 const logout = () => {
-  localStorage.removeItem("currentUser");
+  localStorage.removeItem("trackingNotesCurrentUser");
   location.href = "../index.html";
 };
-
+const loggedUser = getCurrentUser();
+if (loggedUser) {
+  window.onload = function () {
+    history.forward();
+  };
+}
 const createErrorsElements = (errors) => {
   $errorDisplay.innerHTML = "";
   $successDisplay.innerHTML = "";
@@ -66,7 +77,7 @@ const createErrorsElements = (errors) => {
   }
   $errorDisplay.appendChild($ul);
   $errorDisplay.style.display = "block";
-  infoModal.click();
+  $infoModal.click();
 };
 const createSuccessElements = (isSaved, message) => {
   $successDisplay.innerHTML = "";
@@ -82,7 +93,7 @@ const createSuccessElements = (isSaved, message) => {
     $successDisplay.innerHTML = "";
     $successDisplay.style.display = "none";
   }
-  infoModal.click();
+  $infoModal.click();
 };
 
 const registrationValidations = () => {
@@ -143,10 +154,36 @@ const registrationValidations = () => {
   }
   return isError;
 };
+const loginValidations = () => {
+  let errorMessage = "";
+  let isError = false;
+  const errors = [];
+
+  try {
+    if ($loginUsername.value.trim().length === 0) {
+      isError = true;
+      errorMessage = `* The username cannot be blank.`;
+      errors.push(errorMessage);
+    }
+    if ($loginPassword.value.trim().length === 0) {
+      isError = true;
+      errorMessage = `* The password cannot be blank.`;
+      errors.push(errorMessage);
+    }
+
+    if (errors.length > 0) {
+      createErrorsElements(errors);
+    } else {
+      $errorDisplay.style.display = "none";
+    }
+  } catch (error) {
+    console.error(error);
+  }
+  return isError;
+};
 if ($registerForm) {
   $registerForm.addEventListener("submit", (e) => {
     e.preventDefault();
-
     const isError = registrationValidations();
     if (isError) return;
     const data = getData();
@@ -168,13 +205,43 @@ if ($registerForm) {
     saveData(data);
     $registerForm.reset();
     createSuccessElements(!isError, "Successfully registered!");
+
     setTimeout(() => {
-      infoModal.click();
+      $infoModal.click();
       $errorDisplay.style.display = "none";
       $successDisplay.style.display = "none";
       $errorDisplay.innerHTML = "";
       $successDisplay.innerHTML = "";
       location.href = "../index.html";
+    }, 3000);
+  });
+}
+
+if ($loginForm) {
+  $loginForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const isError = loginValidations();
+    if (isError) return;
+    const data = getData();
+    const user = data.find(
+      (user) =>
+        user.username === $loginUsername.value.trim() &&
+        user.password === $loginPassword.value.trim()
+    );
+    if (!user) {
+      const errors = ["* Invalid credentials!"];
+      createErrorsElements(errors);
+      return;
+    }
+    setCurrentUser($loginUsername.value.trim().toLowerCase());
+    $loginForm.reset();
+    setTimeout(() => {
+      $errorDisplay.style.display = "none";
+      $successDisplay.style.display = "none";
+      $errorDisplay.innerHTML = "";
+      $successDisplay.innerHTML = "";
+      location.href = "../pages/notes.html";
     }, 3000);
   });
 }
