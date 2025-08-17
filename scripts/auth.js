@@ -15,12 +15,19 @@ const $loginForm = document.getElementById("loginForm");
 const $loginUsername = document.getElementById("loginUsername");
 const $loginPassword = document.getElementById("loginPassword");
 
-const encryptB64 = (str) => {
-  return btoa(str);
-};
-const decryptB64 = (base64Str) => {
-  return atob(base64Str);
-};
+function encryptB64(text) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(text);
+  return btoa(String.fromCharCode(...data));
+}
+
+function decryptB64(base64) {
+  const decoder = new TextDecoder();
+  const data = atob(base64);
+  return decoder.decode(
+    new Uint8Array([...data].map((char) => char.charCodeAt(0)))
+  );
+}
 
 const getData = () => {
   const encryptedData = localStorage.getItem("TrackingNotesDB");

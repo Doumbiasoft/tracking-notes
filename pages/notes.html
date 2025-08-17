@@ -1,61 +1,169 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="manifest" href="../manifest.json" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
-    <link rel="stylesheet" href="../styles/app.css">
-    <link rel="icon" type="image/x-icon" href="../images/note-tracking-logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="../styles/app.css" />
+    <link rel="icon" type="image/x-icon" href="../images/note-tracking-logo.png" />
     <script defer src="../scripts/auth.js"></script>
     <script defer src="../scripts/notes.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
+    <script defer src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+
+    <link rel="stylesheet" href="../styles/github-dark.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
+
+    <script>
+        hljs.highlightAll();
+    </script>
     <title>Notes - Tracking Notes</title>
 </head>
 
-<body class="bg-gray-100 text-black dark:bg-gray-900 dark:text-white min-h-screen p-6">
-    <div class="max-w-4xl mx-auto mt-4">
+<body class="bg-gray-900 text-white min-h-screen p-6">
+    <div class="max-w-4xl mx-auto">
         <div
-            class="flex justify-between items-center py-3 bg-white dark:bg-gray-800 text-black dark:text-white rounded-xl shadow-md p-4 mb-6">
+            class="flex justify-between items-center py-3 bg-gray-800 text-white rounded-xl shadow-md p-4 mb-6 mt-4 sticky top-4 z-50">
             <div class="flex items-center gap-2">
-                <img src="../images/note-tracking-logo.png" alt="logo" class="h-10 w-10">
-                <h3 id="mainTitle" class="text-lg font-bold text-red-400 mt-2 text-center uppercase">Tracking
-                    Notes</h3>
+                <img src="../images/note-tracking-logo.png" alt="logo" class="h-9 w-9" />
+                <h3 id="mainTitle" class="text-sm font-bold text-red-400 text-center uppercase">
+                    Tracking Notes
+                </h3>
             </div>
-            <div>
-                <span class="text-lg uppercase mr-2"><strong>Welcome back :</strong> <span
-                        class="text-red-400">doumbiasoft</span></span>
+            <div class="flex gap-2 items-center">
+                <span class="text-sm uppercase"><strong>Welcome back :</strong>
+                    <span id="usernameDisplay" class="text-red-400"></span></span>
                 <button title="Log out" onclick="logout()"
-                    class="bg-red-500 text-white px-3 py-1 rounded-sm cursor-pointer"><i
-                        class="fa-solid fa-power-off"></i></button>
-
+                    class="bg-red-500 hover:bg-red-400 text-white p-1 rounded-full cursor-pointer h-9 w-9 shrink-0">
+                    <i class="fa-solid fa-power-off text-sm"></i>
+                </button>
             </div>
         </div>
-
-        <form id="noteForm"
-            class="bg-white dark:bg-gray-800 text-black dark:text-white rounded-xl shadow-md p-4 mb-6 flex flex-col gap-3">
-            <input id="noteTitle" type="text" placeholder="Note Title" required minlength="3"
-                class="bg-red-50 dark:bg-gray-600 text-black dark:text-white border border-red-400 rounded-lg px-3 py-2">
-            <textarea id="noteContent" placeholder="Write your note..." rows="3" required minlength="5"
-                class="bg-red-50 dark:bg-gray-600 text-black dark:text-white border border-red-400  rounded-lg px-3 py-2"></textarea>
-            <input type="submit"
-                class="bg-red-400 hover:bg-red-500 text-white py-2 cursor-pointer mt-3 mb-3 rounded-3xl uppercase"
-                value="Add Note" />
-        </form>
-
-        <div id="notesContainer" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        <div class="flex justify-between items-center w-full mb-5 gap-4">
+            <div class="relative flex-1">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                    </svg>
+                </div>
+                <input type="search" id="searchNotes" placeholder="Search notes..."
+                    class="block w-full p-2.5 pl-10 text-sm text-white border border-gray-600 rounded-lg bg-gray-700 focus:ring-red-500 focus:border-red-500 placeholder-gray-400" />
+            </div>
+            <button data-modal-target="crud-modal" data-modal-toggle="crud-modal"
+                class="text-white inline-flex items-center cursor-pointer font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-red-500 hover:bg-red-400">
+                <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                        clip-rule="evenodd"></path>
+                </svg>
+                Add new note
+            </button>
+        </div>
+        <div id="notesContainer" class="sm:grid-cols-2 lg:grid-cols-3 gap-4 hidden"></div>
+        <div id="emptyNotes" class="w-full justify-center items-center hidden">
+            <div class="flex flex-col justify-center items-center">
+                <img src="../images/notes-pana.png" alt="Notes" class="w-60 h-60 mt-28" />
+                <div class="flex flex-col justify-center items-center">
+                    <h1>No available notes, start creating notes</h1>
+                    <h1 class="text-gray-500">Explore the creativity inside you!</h1>
+                </div>
+            </div>
+        </div>
     </div>
 
     <template id="noteTemplate">
-        <div class="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between note-card">
+        <div class="bg-gray-800 text-white shadow-md rounded-lg p-4 flex flex-col justify-between note-card">
             <div>
-                <h2 class="note-title text-lg font-bold mb-2"></h2>
-                <p class="note-content text-gray-700 whitespace-pre-wrap"></p>
+                <div class="flex items-center gap-2 mb-3">
+                    <i class="fa-solid fa-note-sticky text-lg text-red-400"></i>
+                    <h2 class="note-title text-lg font-bold text-white"></h2>
+                </div>
+                <div
+                    class="note-content text-gray-300 whitespace-pre-wrap break-all overflow-wrap-anywhere word-break-break-all text-left mb-5">
+                </div>
+                <div id="codeDisplay" class="hidden">
+                    <pre
+                        class="bg-[#141f33] p-2 rounded-lg"><code class="note-code text-gray-300 whitespace-pre-wrap break-all overflow-wrap-anywhere word-break-break-all text-left "></code></pre>
+                </div>
             </div>
-            <button class="delete-btn text-red-500 hover:text-red-700 mt-4">🗑 Delete</button>
+            <div class="flex justify-end items-center w-full gap-3 border-t border-gray-600 mt-10">
+                <button class="edit-btn text-gray-400 hover:text-white mt-4 cursor-pointer flex gap-1 items-center">
+                    <i class="fa-solid fa-pen"></i>Edit
+                </button>
+                <button class="delete-btn text-gray-400 hover:text-red-700 mt-4 cursor-pointer flex gap-1 items-center">
+                    <i class="fa-solid fa-trash"></i>Delete
+                </button>
+            </div>
         </div>
     </template>
+    <!-- Main modal -->
+    <div id="crud-modal" tabindex="-1" aria-hidden="true"
+        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative p-4 w-full max-w-md max-h-full">
+            <!-- Modal content -->
+            <div class="relative rounded-lg shadow-sm bg-gray-800">
+                <!-- Modal header -->
+                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-600">
+                    <h3 class="text-lg font-semibold text-white">Create New Note</h3>
+                    <button id="closeModal" type="button"
+                        class="text-gray-400 bg-transparent cursor-pointer rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center hover:bg-gray-600 hover:text-white"
+                        data-modal-toggle="crud-modal">
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                        </svg>
+                        <span class="sr-only">Close modal</span>
+                    </button>
+                </div>
+                <!-- Modal body -->
+                <form id="noteForm" class="p-4 md:p-5">
+                    <div class="grid gap-4 mb-4 grid-cols-2">
+                        <div class="col-span-2">
+                            <label for="noteTitle" class="block mb-2 text-sm font-medium text-white">Title</label>
+                            <input type="text" id="noteTitle"
+                                class="block p-2.5 w-full text-sm rounded-lg border bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-red-500 focus:border-red-500"
+                                placeholder="Note Title" required minlength="3" />
+                        </div>
+                        <div class="col-span-2">
+                            <label for="noteContent"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                Description</label>
+                            <textarea id="noteContent" rows="4"
+                                class="block p-2.5 w-full text-sm rounded-lg border bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-red-500 focus:border-red-500"
+                                placeholder="Write your note..." required minlength="5"></textarea>
+                        </div>
+                        <div class="col-span-2">
+                            <label for="noteCode" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                Code snippet<i class="fa-solid fa-code ml-2 text-red-500 text-lg"></i></label>
+                            <textarea id="noteCode" rows="3"
+                                class="block p-2.5 w-full text-sm rounded-lg border bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-red-500 focus:border-red-500"
+                                placeholder="Add code..." minlength="5"></textarea>
+                        </div>
+                    </div>
+                    <button type="submit"
+                        class="text-white inline-flex items-center cursor-pointer font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-red-500 hover:bg-red-400">
+                        <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        Add note
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
