@@ -1,5 +1,13 @@
 if (!getCurrentUser()) {
   location.href = getBaseUrl() + "index.html"; // Redirect if not logged in
+} else {
+  history.pushState(null, null, location.href);
+  window.onpopstate = function () {
+    history.pushState(null, null, location.href);
+  };
+  window.addEventListener("beforeunload", function () {
+    history.pushState(null, null, location.href);
+  });
 }
 
 const $mainTitle = document.getElementById("mainTitle");

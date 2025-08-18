@@ -5,9 +5,12 @@ const regexOfCheckPassword =
 // Get base URL dynamically
 const getBaseUrl = () => {
   const currentPath = window.location.pathname;
-  const pathSegments = currentPath.split('/');
+  const pathSegments = currentPath.split("/");
   pathSegments.pop(); // Remove the current file
-  return window.location.origin + pathSegments.join('/') + '/';
+  if (pathSegments[pathSegments.length - 1] === "pages") {
+    pathSegments.pop();
+  }
+  return window.location.origin + pathSegments.join("/") + "/";
 };
 
 const $loading = document.querySelector("#loading");
@@ -74,9 +77,10 @@ const logout = () => {
 };
 const loggedUser = getCurrentUser();
 if (loggedUser) {
-  window.onload = function () {
-    history.forward();
-  };
+  const currentPage = window.location.pathname.split("/").pop();
+  if (currentPage === "index.html" || currentPage === "register.html") {
+    location.href = getBaseUrl() + "pages/notes.html";
+  }
 }
 const createErrorsElements = (errors) => {
   $errorDisplay.innerHTML = "";
@@ -265,7 +269,7 @@ if ($loginForm) {
       $successDisplay.style.display = "none";
       $errorDisplay.innerHTML = "";
       $successDisplay.innerHTML = "";
-      location.href = getBaseUrl() + "notes.html";
+      location.href = getBaseUrl() + "pages/notes.html";
     }, 1000);
   });
 }
