@@ -10,7 +10,7 @@ A secure, feature-rich note-taking Progressive Web Application with code snippet
 
 **Tracking Notes** is a modern web application designed for developers and note-takers who need a secure, organized way to store personal notes with code snippets. Built with vanilla JavaScript and a focus on security, it provides a complete note management solution with user authentication, real-time search, and beautiful syntax highlighting.
 
-## Live at: https://doumbiasoft.github.io/tracking-notes
+## 🌐 Live Demo: [Try Tracking Notes](https://doumbiasoft.github.io/tracking-notes){:target="_blank"}
 
 ## ✨ Key Features
 
