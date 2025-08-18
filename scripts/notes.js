@@ -1,6 +1,9 @@
 if (!getCurrentUser()) {
   location.href = "../index.html"; // Redirect if not logged in
 }
+
+const $mainTitle = document.getElementById("mainTitle");
+const $welcomeDisplay = document.getElementById("welcomeDisplay");
 const $noteForm = document.getElementById("noteForm");
 const $noteTitle = document.getElementById("noteTitle");
 const $noteContent = document.getElementById("noteContent");
@@ -10,6 +13,13 @@ const $noteTemplate = document.querySelector("#noteTemplate");
 const $closeModal = document.querySelector("#closeModal");
 const $usernameDisplay = document.querySelector("#usernameDisplay");
 const $emptyNotes = document.querySelector("#emptyNotes");
+
+window.addEventListener("resize", () => {
+  if (window.innerWidth < 768) {
+    $mainTitle.classList.add("text-xs");
+    $welcomeDisplay.classList.add("text-xs");
+  }
+});
 
 const currentUser = getCurrentUser();
 const data = getData();
