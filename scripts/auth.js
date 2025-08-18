@@ -1,7 +1,6 @@
 const regexOfNoSpecialCharacterOrWhiteSpaceInText = /^[a-zA-Z0-9]+$/;
 const regexOfCheckPassword =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9])(?!.*[Pp][Aa][Ss][Ss][Ww][Oo][Rr][Dd]).{12,}$/;
-
 // Get base URL dynamically
 const getBaseUrl = () => {
   const currentPath = window.location.pathname;

@@ -37,6 +37,7 @@ const $noteTemplate = document.querySelector("#noteTemplate");
 const $closeModal = document.querySelector("#closeModal");
 const $usernameDisplay = document.querySelector("#usernameDisplay");
 const $emptyNotes = document.querySelector("#emptyNotes");
+const $searchNotes = document.querySelector("#searchNotes");
 
 window.addEventListener("resize", () => {
   if (window.innerWidth < 768) {
@@ -50,9 +51,9 @@ const data = getData();
 const user = data.find((user) => user.username === currentUser);
 
 $usernameDisplay.textContent = user.username;
-function handleDisplay() {
+function handleDisplay(notesToCheck = user.notes) {
   hljs.highlightAll();
-  if (user.notes.length > 0) {
+  if (notesToCheck.length > 0) {
     $notesContainer.style.display = "grid";
     $emptyNotes.style.display = "none";
   } else {
@@ -74,11 +75,11 @@ function styleFirstNote() {
     );
   }
 }
-function renderNotes() {
+function renderNotes(notesToRender = user.notes) {
   $notesContainer.innerHTML = "";
   const fragment = document.createDocumentFragment();
 
-  user.notes.forEach((note, index) => {
+  notesToRender.forEach((note) => {
     const $noteElement = $noteTemplate.content.cloneNode(true);
     $noteElement.querySelector(".note-title").textContent = note.title;
     $noteElement.querySelector(".note-content").textContent = note.content;
@@ -93,15 +94,32 @@ function renderNotes() {
       $codeDisplayElement.classList.add("hidden");
     }
     $noteElement.querySelector(".delete-btn").addEventListener("click", () => {
-      deleteNote(index);
+      const actualIndex = user.notes.findIndex((n) => n === note);
+      deleteNote(actualIndex);
       saveUsers(data);
-      renderNotes();
+      filterAndRender();
     });
     fragment.appendChild($noteElement);
   });
   $notesContainer.appendChild(fragment);
-  handleDisplay();
+  handleDisplay(notesToRender);
 }
+
+function filterAndRender() {
+  const searchTerm = $searchNotes.value.trim().toLowerCase();
+  if (searchTerm === "") {
+    renderNotes();
+  } else {
+    const filteredNotes = user.notes.filter(
+      (note) =>
+        note.title.toLowerCase().includes(searchTerm) ||
+        note.content.toLowerCase().includes(searchTerm)
+    );
+    renderNotes(filteredNotes);
+  }
+}
+
+$searchNotes.addEventListener("input", filterAndRender);
 if ($noteForm) {
   $noteForm.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -117,9 +135,8 @@ if ($noteForm) {
     saveData(data);
     $noteForm.reset();
     $closeModal.click();
-    renderNotes();
+    filterAndRender();
   });
 }
 
-renderNotes();
-handleDisplay();
+filterAndRender();
