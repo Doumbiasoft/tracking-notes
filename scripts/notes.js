@@ -38,10 +38,16 @@ const $closeModal = document.querySelector("#closeModal");
 const $usernameDisplay = document.querySelector("#usernameDisplay");
 const $emptyNotes = document.querySelector("#emptyNotes");
 const $searchNotes = document.querySelector("#searchNotes");
+const $confirmDeleteModal = document.querySelector("#popup-modal");
+const $confirmDeleteBtn = document.querySelector("#confirmDelete");
+const $cancelDeleteBtn = document.querySelector("#cancelDelete");
 
 // Edit mode variables
 let isEditMode = false;
 let editingNoteIndex = -1;
+
+// Delete confirmation variables
+let noteToDeleteIndex = -1;
 
 window.addEventListener("resize", () => {
   if (window.innerWidth < 768) {
@@ -69,6 +75,14 @@ function deleteNote(index) {
   user.notes.splice(index, 1);
   saveData(data);
   renderNotes();
+}
+
+function showDeleteConfirmation(index) {
+  noteToDeleteIndex = index;
+  // Manually open confirmation modal
+  $confirmDeleteModal.classList.remove("hidden");
+  $confirmDeleteModal.classList.add("flex", "bg-gray-900/50");
+  $confirmDeleteModal.setAttribute("aria-hidden", "false");
 }
 
 function editNote(index) {
@@ -144,13 +158,11 @@ function renderNotes(notesToRender = user.notes) {
     }
     $noteElement.querySelector(".delete-btn").addEventListener("click", () => {
       const actualIndex = user.notes.findIndex((n) => n === note);
-      deleteNote(actualIndex);
-      saveUsers(data);
-      filterAndRender();
+      showDeleteConfirmation(actualIndex);
     });
 
-    const editBtn = $noteElement.querySelector(".edit-btn");
-    editBtn.addEventListener("click", () => {
+    const $editBtn = $noteElement.querySelector(".edit-btn");
+    $editBtn.addEventListener("click", () => {
       const actualIndex = user.notes.findIndex((n) => n === note);
       editNote(actualIndex);
       // Manually open modal
@@ -163,7 +175,6 @@ function renderNotes(notesToRender = user.notes) {
   });
   $notesContainer.appendChild(fragment);
   handleDisplay(notesToRender);
-
   // Reinitialize Flowbite components for new elements
   if (typeof window.initFlowbite === "function") {
     window.initFlowbite();
@@ -185,7 +196,6 @@ function filterAndRender() {
 }
 
 $searchNotes.addEventListener("input", filterAndRender);
-
 // Remove Flowbite attributes from close button
 $closeModal.removeAttribute("data-modal-toggle");
 
@@ -260,6 +270,65 @@ if ($noteForm) {
     $modal.classList.remove("flex", "bg-gray-900/50");
     $modal.setAttribute("aria-hidden", "true");
     filterAndRender();
+  });
+}
+
+if ($confirmDeleteBtn) {
+  // Remove Flowbite attributes and handle manually
+  $confirmDeleteBtn.removeAttribute("data-modal-hide");
+  $confirmDeleteBtn.addEventListener("click", () => {
+    // Close confirmation modal first
+    $confirmDeleteModal.classList.add("hidden");
+    $confirmDeleteModal.classList.remove("flex", "bg-gray-900/50");
+    $confirmDeleteModal.setAttribute("aria-hidden", "true");
+
+    // delete the note
+    if (noteToDeleteIndex !== -1) {
+      deleteNote(noteToDeleteIndex);
+      saveUsers(data);
+      filterAndRender();
+      noteToDeleteIndex = -1;
+    }
+  });
+}
+
+if ($cancelDeleteBtn) {
+  // Remove Flowbite attributes and handle manually
+  $cancelDeleteBtn.removeAttribute("data-modal-hide");
+  $cancelDeleteBtn.addEventListener("click", () => {
+    noteToDeleteIndex = -1;
+    // Close confirmation modal
+    $confirmDeleteModal.classList.add("hidden");
+    $confirmDeleteModal.classList.remove("flex", "bg-gray-900/50");
+    $confirmDeleteModal.setAttribute("aria-hidden", "true");
+  });
+}
+
+// Handle close button on confirmation modal
+const $confirmDeleteCloseBtn = $confirmDeleteModal?.querySelector(
+  "[data-modal-hide='popup-modal']"
+);
+if ($confirmDeleteCloseBtn) {
+  $confirmDeleteCloseBtn.removeAttribute("data-modal-hide");
+  $confirmDeleteCloseBtn.addEventListener("click", () => {
+    noteToDeleteIndex = -1;
+    // Close confirmation modal
+    $confirmDeleteModal.classList.add("hidden");
+    $confirmDeleteModal.classList.remove("flex", "bg-gray-900/50");
+    $confirmDeleteModal.setAttribute("aria-hidden", "true");
+  });
+}
+
+// Close confirmation modal when clicking backdrop
+if ($confirmDeleteModal) {
+  $confirmDeleteModal.addEventListener("click", (e) => {
+    if (e.target === $confirmDeleteModal) {
+      noteToDeleteIndex = -1;
+      // Close confirmation modal
+      $confirmDeleteModal.classList.add("hidden");
+      $confirmDeleteModal.classList.remove("flex", "bg-gray-900/50");
+      $confirmDeleteModal.setAttribute("aria-hidden", "true");
+    }
   });
 }
 
