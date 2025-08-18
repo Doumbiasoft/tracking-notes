@@ -77,11 +77,37 @@ const logout = () => {
 };
 const loggedUser = getCurrentUser();
 if (loggedUser) {
+  // If user is logged in and on login/register page, redirect immediately
   const currentPage = window.location.pathname.split("/").pop();
   if (currentPage === "index.html" || currentPage === "register.html") {
     location.href = getBaseUrl() + "pages/notes.html";
   }
+} else {
+  // Prevent forward navigation for non-logged users
+  const preventNavigation = () => {
+    // Clear any existing history
+    history.replaceState(null, null, location.href);
+  };
+  preventNavigation();
+  window.onpopstate = function () {
+    location.href = location.href;
+  };
 }
+
+document.addEventListener("visibilitychange", function () {
+  const currentUser = getCurrentUser();
+  if (document.visibilityState === "visible") {
+    if (currentUser) {
+      if (!location.pathname.includes("notes.html")) {
+        location.href = getBaseUrl() + "pages/notes.html";
+      }
+    } else {
+      if (location.pathname.includes("notes.html")) {
+        location.href = getBaseUrl() + "index.html";
+      }
+    }
+  }
+});
 const createErrorsElements = (errors) => {
   $errorDisplay.innerHTML = "";
   $successDisplay.innerHTML = "";
@@ -270,6 +296,8 @@ if ($loginForm) {
       $errorDisplay.innerHTML = "";
       $successDisplay.innerHTML = "";
       location.href = getBaseUrl() + "pages/notes.html";
+      $loading.style.display = "none";
+      $loginForm.reset();
     }, 1000);
   });
 }

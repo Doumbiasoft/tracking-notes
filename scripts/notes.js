@@ -4,27 +4,28 @@ if (!getCurrentUser()) {
   const preventNavigation = () => {
     // Clear any existing history
     history.replaceState(null, null, location.href);
-    // Add multiple entries to history to make back button ineffective
-    for (let i = 0; i < 10; i++) {
-      history.pushState(null, null, location.href);
-    }
   };
   // Initial prevention
   preventNavigation();
-  // Handle back/forward attempts
-  window.onpopstate = function (event) {
+  window.onpopstate = function () {
     location.href = getBaseUrl() + "pages/notes.html";
   };
-  document.addEventListener("visibilitychange", function () {
-    if (document.visibilityState === "visible" && getCurrentUser()) {
-      // If user is still logged in and page becomes visible, ensure we're on notes
+}
+
+document.addEventListener("visibilitychange", function () {
+  const currentUser = getCurrentUser();
+  if (document.visibilityState === "visible") {
+    if (currentUser) {
       if (!location.pathname.includes("notes.html")) {
         location.href = getBaseUrl() + "pages/notes.html";
       }
+    } else {
+      if (location.pathname.includes("notes.html")) {
+        location.href = getBaseUrl() + "index.html";
+      }
     }
-  });
-}
-
+  }
+});
 const $mainTitle = document.getElementById("mainTitle");
 const $welcomeDisplay = document.getElementById("welcomeDisplay");
 const $noteForm = document.getElementById("noteForm");
