@@ -39,6 +39,10 @@ const $usernameDisplay = document.querySelector("#usernameDisplay");
 const $emptyNotes = document.querySelector("#emptyNotes");
 const $searchNotes = document.querySelector("#searchNotes");
 
+// Edit mode variables
+let isEditMode = false;
+let editingNoteIndex = -1;
+
 window.addEventListener("resize", () => {
   if (window.innerWidth < 768) {
     $mainTitle.classList.add("text-xs");
@@ -65,6 +69,48 @@ function deleteNote(index) {
   user.notes.splice(index, 1);
   saveData(data);
   renderNotes();
+}
+
+function editNote(index) {
+  isEditMode = true;
+  editingNoteIndex = index;
+  const note = user.notes[index];
+
+  $noteTitle.value = note.title;
+  $noteContent.value = note.content;
+  $noteCode.value = note.code || "";
+
+  // Update modal title
+  const modalTitle = document.querySelector("#crud-modal h3");
+  modalTitle.textContent = "Edit Note";
+
+  // Update submit button text
+  const submitBtn = document.querySelector("#noteForm button[type='submit']");
+  const submitText =
+    submitBtn.querySelector("span") ||
+    submitBtn.childNodes[submitBtn.childNodes.length - 1];
+  if (submitText.nodeType === Node.TEXT_NODE) {
+    submitText.textContent = "Update note";
+  } else {
+    submitBtn.innerHTML = submitBtn.innerHTML.replace(
+      "Add note",
+      "Update note"
+    );
+  }
+}
+
+function resetModalToCreateMode() {
+  isEditMode = false;
+  editingNoteIndex = -1;
+
+  // Reset modal title
+  const modalTitle = document.querySelector("#crud-modal h3");
+  modalTitle.textContent = "Create New Note";
+
+  // Reset submit button text
+  const submitBtn = document.querySelector("#noteForm button[type='submit']");
+  submitBtn.innerHTML = submitBtn.innerHTML.replace("Update note", "Add note");
+  $noteForm.reset();
 }
 function styleFirstNote() {
   if ($notesContainer.firstChild) {
@@ -99,10 +145,26 @@ function renderNotes(notesToRender = user.notes) {
       saveUsers(data);
       filterAndRender();
     });
+
+    const editBtn = $noteElement.querySelector(".edit-btn");
+    editBtn.addEventListener("click", () => {
+      const actualIndex = user.notes.findIndex((n) => n === note);
+      editNote(actualIndex);
+      // Manually close modal
+      modal.classList.remove("hidden");
+      modal.classList.add("flex", "bg-gray-900/50");
+      modal.setAttribute("aria-hidden", "false");
+    });
+
     fragment.appendChild($noteElement);
   });
   $notesContainer.appendChild(fragment);
   handleDisplay(notesToRender);
+
+  // Reinitialize Flowbite components for new elements
+  if (typeof window.initFlowbite === "function") {
+    window.initFlowbite();
+  }
 }
 
 function filterAndRender() {
@@ -120,6 +182,46 @@ function filterAndRender() {
 }
 
 $searchNotes.addEventListener("input", filterAndRender);
+
+$closeModal.addEventListener("click", () => {
+  resetModalToCreateMode();
+  // Manually close modal
+  modal.classList.add("hidden");
+  modal.classList.remove("flex", "bg-gray-900/50");
+  modal.setAttribute("aria-hidden", "true");
+});
+
+const modal = document.querySelector("#crud-modal");
+if (modal) {
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      e.stopPropagation();
+      e.preventDefault();
+      return false;
+    }
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !modal.classList.contains("hidden")) {
+      e.stopPropagation();
+      e.preventDefault();
+      return false;
+    }
+  });
+}
+
+const $addNoteBtn = document.querySelector("[data-modal-target='crud-modal']");
+if ($addNoteBtn) {
+  $addNoteBtn.removeAttribute("data-modal-target");
+  $addNoteBtn.removeAttribute("data-modal-toggle");
+
+  $addNoteBtn.addEventListener("click", () => {
+    resetModalToCreateMode();
+    // Manually close modal
+    modal.classList.remove("hidden");
+    modal.classList.add("flex", "bg-gray-900/50");
+    modal.setAttribute("aria-hidden", "false");
+  });
+}
 if ($noteForm) {
   $noteForm.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -127,14 +229,30 @@ if ($noteForm) {
     if ($noteCode.value.trim()) {
       code = $noteCode.value.trim();
     }
-    user.notes.push({
-      title: $noteTitle.value.trim(),
-      content: $noteContent.value.trim(),
-      code: code,
-    });
+
+    if (isEditMode) {
+      // Update existing note
+      user.notes[editingNoteIndex] = {
+        title: $noteTitle.value.trim(),
+        content: $noteContent.value.trim(),
+        code: code,
+      };
+    } else {
+      // Create new note
+      user.notes.push({
+        title: $noteTitle.value.trim(),
+        content: $noteContent.value.trim(),
+        code: code,
+      });
+    }
+
     saveData(data);
     $noteForm.reset();
-    $closeModal.click();
+    resetModalToCreateMode();
+    // Manually close modal
+    modal.classList.add("hidden");
+    modal.classList.remove("flex", "bg-gray-900/50");
+    modal.setAttribute("aria-hidden", "true");
     filterAndRender();
   });
 }
