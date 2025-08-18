@@ -257,7 +257,7 @@ if ($loginForm) {
       $successDisplay.style.display = "none";
       $errorDisplay.innerHTML = "";
       $successDisplay.innerHTML = "";
-      location.href = "../pages/notes.html";
+      location.href = "../notes.html";
     }, 1000);
   });
 }
