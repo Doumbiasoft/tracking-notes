@@ -279,7 +279,7 @@ if ($loginForm) {
     const data = getData();
     const user = data.find(
       (user) =>
-        user.username === $loginUsername.value.trim() &&
+        user.username === $loginUsername.value.trim().toLowerCase() &&
         user.password === $loginPassword.value.trim()
     );
     if (!user) {
