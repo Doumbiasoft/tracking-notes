@@ -1,5 +1,5 @@
 if (!getCurrentUser()) {
-  location.href = "../index.html"; // Redirect if not logged in
+  location.href = getBaseUrl() + "index.html"; // Redirect if not logged in
 }
 
 const $mainTitle = document.getElementById("mainTitle");

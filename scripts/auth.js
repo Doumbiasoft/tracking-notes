@@ -2,6 +2,14 @@ const regexOfNoSpecialCharacterOrWhiteSpaceInText = /^[a-zA-Z0-9]+$/;
 const regexOfCheckPassword =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9])(?!.*[Pp][Aa][Ss][Ss][Ww][Oo][Rr][Dd]).{12,}$/;
 
+// Get base URL dynamically
+const getBaseUrl = () => {
+  const currentPath = window.location.pathname;
+  const pathSegments = currentPath.split('/');
+  pathSegments.pop(); // Remove the current file
+  return window.location.origin + pathSegments.join('/') + '/';
+};
+
 const $loading = document.querySelector("#loading");
 const $errorDisplay = document.querySelector("#errorDisplay");
 const $successDisplay = document.querySelector("#successDisplay");
@@ -62,7 +70,7 @@ const getCurrentUser = () => {
 
 const logout = () => {
   localStorage.removeItem("trackingNotesCurrentUser");
-  location.href = "../index.html";
+  location.href = getBaseUrl() + "index.html";
 };
 const loggedUser = getCurrentUser();
 if (loggedUser) {
@@ -228,7 +236,7 @@ if ($registerForm) {
       $successDisplay.style.display = "none";
       $errorDisplay.innerHTML = "";
       $successDisplay.innerHTML = "";
-      location.href = "../index.html";
+      location.href = getBaseUrl() + "index.html";
     }, 2000);
   });
 }
@@ -257,7 +265,7 @@ if ($loginForm) {
       $successDisplay.style.display = "none";
       $errorDisplay.innerHTML = "";
       $successDisplay.innerHTML = "";
-      location.href = "../notes.html";
+      location.href = getBaseUrl() + "notes.html";
     }, 1000);
   });
 }
