@@ -81,18 +81,18 @@ function editNote(index) {
   $noteCode.value = note.code || "";
 
   // Update modal title
-  const modalTitle = document.querySelector("#crud-modal h3");
-  modalTitle.textContent = "Edit Note";
+  const $modalTitle = document.querySelector("#crud-modal h3");
+  $modalTitle.textContent = "Edit Note";
 
   // Update submit button text
-  const submitBtn = document.querySelector("#noteForm button[type='submit']");
+  const $submitBtn = document.querySelector("#noteForm button[type='submit']");
   const submitText =
-    submitBtn.querySelector("span") ||
-    submitBtn.childNodes[submitBtn.childNodes.length - 1];
+    $submitBtn.querySelector("span") ||
+    $submitBtn.childNodes[$submitBtn.childNodes.length - 1];
   if (submitText.nodeType === Node.TEXT_NODE) {
     submitText.textContent = "Update note";
   } else {
-    submitBtn.innerHTML = submitBtn.innerHTML.replace(
+    $submitBtn.innerHTML = $submitBtn.innerHTML.replace(
       "Add note",
       "Update note"
     );
@@ -104,12 +104,15 @@ function resetModalToCreateMode() {
   editingNoteIndex = -1;
 
   // Reset modal title
-  const modalTitle = document.querySelector("#crud-modal h3");
-  modalTitle.textContent = "Create New Note";
+  const $modalTitle = document.querySelector("#crud-modal h3");
+  $modalTitle.textContent = "Create New Note";
 
   // Reset submit button text
-  const submitBtn = document.querySelector("#noteForm button[type='submit']");
-  submitBtn.innerHTML = submitBtn.innerHTML.replace("Update note", "Add note");
+  const $submitBtn = document.querySelector("#noteForm button[type='submit']");
+  $submitBtn.innerHTML = $submitBtn.innerHTML.replace(
+    "Update note",
+    "Add note"
+  );
   $noteForm.reset();
 }
 function styleFirstNote() {
@@ -150,10 +153,10 @@ function renderNotes(notesToRender = user.notes) {
     editBtn.addEventListener("click", () => {
       const actualIndex = user.notes.findIndex((n) => n === note);
       editNote(actualIndex);
-      // Manually close modal
-      modal.classList.remove("hidden");
-      modal.classList.add("flex", "bg-gray-900/50");
-      modal.setAttribute("aria-hidden", "false");
+      // Manually open modal
+      $modal.classList.remove("hidden");
+      $modal.classList.add("flex", "bg-gray-900/50");
+      $modal.setAttribute("aria-hidden", "false");
     });
 
     fragment.appendChild($noteElement);
@@ -183,25 +186,28 @@ function filterAndRender() {
 
 $searchNotes.addEventListener("input", filterAndRender);
 
+// Remove Flowbite attributes from close button
+$closeModal.removeAttribute("data-modal-toggle");
+
 $closeModal.addEventListener("click", () => {
   resetModalToCreateMode();
   // Manually close modal
-  modal.classList.add("hidden");
-  modal.classList.remove("flex", "bg-gray-900/50");
-  modal.setAttribute("aria-hidden", "true");
+  $modal.classList.add("hidden");
+  $modal.classList.remove("flex", "bg-gray-900/50");
+  $modal.setAttribute("aria-hidden", "true");
 });
 
-const modal = document.querySelector("#crud-modal");
-if (modal) {
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) {
+const $modal = document.querySelector("#crud-modal");
+if ($modal) {
+  $modal.addEventListener("click", (e) => {
+    if (e.target === $modal) {
       e.stopPropagation();
       e.preventDefault();
       return false;
     }
   });
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !modal.classList.contains("hidden")) {
+    if (e.key === "Escape" && !$modal.classList.contains("hidden")) {
       e.stopPropagation();
       e.preventDefault();
       return false;
@@ -216,10 +222,10 @@ if ($addNoteBtn) {
 
   $addNoteBtn.addEventListener("click", () => {
     resetModalToCreateMode();
-    // Manually close modal
-    modal.classList.remove("hidden");
-    modal.classList.add("flex", "bg-gray-900/50");
-    modal.setAttribute("aria-hidden", "false");
+    // Manually open modal
+    $modal.classList.remove("hidden");
+    $modal.classList.add("flex", "bg-gray-900/50");
+    $modal.setAttribute("aria-hidden", "false");
   });
 }
 if ($noteForm) {
@@ -250,9 +256,9 @@ if ($noteForm) {
     $noteForm.reset();
     resetModalToCreateMode();
     // Manually close modal
-    modal.classList.add("hidden");
-    modal.classList.remove("flex", "bg-gray-900/50");
-    modal.setAttribute("aria-hidden", "true");
+    $modal.classList.add("hidden");
+    $modal.classList.remove("flex", "bg-gray-900/50");
+    $modal.setAttribute("aria-hidden", "true");
     filterAndRender();
   });
 }
