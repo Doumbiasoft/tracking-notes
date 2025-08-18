@@ -1,12 +1,27 @@
 if (!getCurrentUser()) {
   location.href = getBaseUrl() + "index.html"; // Redirect if not logged in
 } else {
-  history.pushState(null, null, location.href);
-  window.onpopstate = function () {
-    history.pushState(null, null, location.href);
+  const preventNavigation = () => {
+    // Clear any existing history
+    history.replaceState(null, null, location.href);
+    // Add multiple entries to history to make back button ineffective
+    for (let i = 0; i < 10; i++) {
+      history.pushState(null, null, location.href);
+    }
   };
-  window.addEventListener("beforeunload", function () {
-    history.pushState(null, null, location.href);
+  // Initial prevention
+  preventNavigation();
+  // Handle back/forward attempts
+  window.onpopstate = function (event) {
+    location.href = getBaseUrl() + "pages/notes.html";
+  };
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "visible" && getCurrentUser()) {
+      // If user is still logged in and page becomes visible, ensure we're on notes
+      if (!location.pathname.includes("notes.html")) {
+        location.href = getBaseUrl() + "pages/notes.html";
+      }
+    }
   });
 }
 
